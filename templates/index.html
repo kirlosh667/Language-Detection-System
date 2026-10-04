@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Language Detection Lab | NLP &amp; Speech</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <div class="page">
+    <header class="site-header">
+      <p class="lab-tag">College NLP &amp; Speech Lab</p>
+      <h1>Language Detection</h1>
+      <p class="lede">
+        Detect the language of typed text or recorded speech.
+        Lab support covers English, Tamil, Hindi, Telugu, and Malayalam.
+      </p>
+    </header>
+
+    <section class="supported" aria-label="Supported languages">
+      <h2>Supported languages</h2>
+      <ul class="lang-list">
+        {% for code, name in supported_languages.items() %}
+        <li><span class="code">{{ code }}</span> {{ name }}</li>
+        {% endfor %}
+      </ul>
+    </section>
+
+    <main class="panels">
+      <!-- Text detection -->
+      <section class="panel" id="text-panel">
+        <h2>Text detection</h2>
+        <p class="panel-help">Type or paste text, or load an example below.</p>
+
+        <label class="field-label" for="text-input">Input text</label>
+        <textarea
+          id="text-input"
+          rows="6"
+          placeholder="Enter text in English, Tamil, Hindi, Telugu, or Malayalam…"
+        ></textarea>
+
+        <div class="examples" id="example-buttons">
+          <span class="examples-label">Examples</span>
+          {% for code, name in supported_languages.items() %}
+          <button
+            type="button"
+            class="example-btn"
+            data-code="{{ code }}"
+            data-text="{{ examples[code] }}"
+            title="{{ examples[code] }}"
+          >
+            {{ name }}
+          </button>
+          {% endfor %}
+        </div>
+
+        <div class="actions">
+          <button type="button" id="detect-text-btn" class="btn primary">Detect language</button>
+          <button type="button" id="clear-text-btn" class="btn ghost">Clear</button>
+        </div>
+
+        <div id="text-result" class="result" hidden></div>
+      </section>
+
+      <!-- Speech detection -->
+      <section class="panel" id="speech-panel">
+        <h2>Speech detection</h2>
+        <p class="panel-help">
+          Record a short phrase. Speech is transcribed with Whisper, then the
+          transcript is run through language detection.
+        </p>
+
+        <div class="recorder">
+          <div class="rec-status" id="rec-status">
+            <span class="rec-dot" aria-hidden="true"></span>
+            <span id="rec-status-text">Ready to record</span>
+          </div>
+          <p class="timer" id="rec-timer">00:00</p>
+
+          <div class="actions">
+            <button type="button" id="record-btn" class="btn primary">Start recording</button>
+            <button type="button" id="stop-btn" class="btn danger" disabled>Stop</button>
+            <button type="button" id="detect-speech-btn" class="btn accent" disabled>Detect from speech</button>
+          </div>
+
+          <audio id="audio-playback" controls hidden></audio>
+          <p class="hint">Allow microphone access when prompted. Speak clearly for 2–8 seconds.</p>
+        </div>
+
+        <div id="speech-result" class="result" hidden></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>
+        Text model: <code>langdetect</code> · Speech model: <code>OpenAI Whisper (tiny)</code>
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    window.LAB_EXAMPLES = {{ examples | tojson }};
+    window.SUPPORTED_LANGUAGES = {{ supported_languages | tojson }};
+  </script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+flask>=3.0.0
+langdetect>=1.0.9
+openai-whisper>=20231117
+Werkzeug>=3.0.0
